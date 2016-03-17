@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -27,6 +26,8 @@ public class GUIElements {
     	    contactless5, contactless7, contactless1, contactless2, contactless4, contactless6,
     	    approach, leave, follow, sniff, mount, compete};
     
+    //When you press the clear button on the GUI this section of code runs
+    //Lines 34 and 35 should be printing the same value but instead I get an error and I can't find out why
     @FXML
     void clearOnAction(ActionEvent event) {
     	System.out.println("Clear");
