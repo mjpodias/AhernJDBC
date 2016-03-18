@@ -12,7 +12,10 @@ public class Main extends Application{
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		Pane mainPane = (Pane) FXMLLoader.load(Main.class.getResource("gui.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader();
+		Pane mainPane = (Pane) fxmlLoader.load(Main.class.getResource("gui.fxml").openStream());
+		GUIElements controller = fxmlLoader.getController();
+		controller.populate();
 		stage.setScene(new Scene(mainPane));
 		mainPane.getStylesheets().add("style/style.css");
 		stage.show();
