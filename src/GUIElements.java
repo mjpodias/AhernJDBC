@@ -12,11 +12,12 @@ public class GUIElements {
     private CheckBox Q398, Q399, Q521, Q522, Q531, Q532, Q573, Q574,
     Q606, Q607, Q680, Q681, Q685, Q686, Q690, Q691, Q693point1, Q693point2,
     Q693point4, Q693point5, Q694, Q695, Q696, Q697, Q698, Q699, Q703,
-    Q704, Q704point1, Q704point2, Q708, Q709, male, female, negative12, negative7,
+    Q704, Q704point1, Q704point2, Q708, Q709, m, f, negative12, negative7,
     exp104, exp10c3, exp10c6, exp113, exp11c1, exp11c3, exp11c5, exp11c6,
-    exp11c7, pvb5, pvb7, pvc13, center, stayhide, socialcontact, contactless3,
-    contactless5, contactless7, contactless1, contactless2, contactless4, contactless6,
-    approach, leave, follow, sniff, mount, compete;
+    exp11c7, pvb5, pvb7, pvc13, center_duration, stay_hide_duration, social_contact_duration, 
+    three_contact_duration, five_contact_duration, seven_contact_duration, one_contact_duration, 
+    two_contact_duration, four_contact_duration, six_contact_duration, approach_duration, leave_duration, 
+    follow_duration, sniff_duration, mount_duration, compete_duration;
     
     private ArrayList<CheckBox> actor = new ArrayList<CheckBox>();
     private ArrayList<CheckBox> gender = new ArrayList<CheckBox>();
@@ -78,8 +79,8 @@ public class GUIElements {
         actor.add(Q704point2); 
         actor.add(Q708); 
         actor.add(Q709); 
-        gender.add(male);
-        gender.add(female); 
+        gender.add(m);
+        gender.add(f); 
         parentage.add(negative12); 
         parentage.add(negative7);
         parentage.add(exp104); 
@@ -94,22 +95,22 @@ public class GUIElements {
         parentage.add(pvb5); 
         parentage.add(pvb7); 
         parentage.add(pvc13); 
-        behavior.add(center); 
-        behavior.add(stayhide); 
-        behavior.add(socialcontact); 
-        behavior.add(contactless3);
-        behavior.add(contactless5);
-        behavior.add(contactless7); 
-        behavior.add(contactless1); 
-        behavior.add(contactless2); 
-        behavior.add(contactless4); 
-        behavior.add(contactless6);
-        behavior.add( approach); 
-        behavior.add(leave); 
-        behavior.add(follow); 
-        behavior.add(sniff); 
-        behavior.add(mount); 
-        behavior.add(compete);
+        behavior.add(center_duration); 
+        behavior.add(stay_hide_duration); 
+        behavior.add(social_contact_duration); 
+        behavior.add(three_contact_duration); 
+        behavior.add(five_contact_duration); 
+        behavior.add(seven_contact_duration); 
+        behavior.add(one_contact_duration); 
+        behavior.add(two_contact_duration); 
+        behavior.add(four_contact_duration); 
+        behavior.add(six_contact_duration);
+        behavior.add(approach_duration); 
+        behavior.add(leave_duration); 
+        behavior.add(follow_duration); 
+        behavior.add(sniff_duration); 
+        behavior.add(mount_duration); 
+        behavior.add(compete_duration);
     }
 
 }

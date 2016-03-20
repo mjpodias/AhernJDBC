@@ -76,8 +76,8 @@
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <CheckBox fx:id="male" layoutX="161.0" layoutY="41.0" mnemonicParsing="false" prefHeight="13.0" prefWidth="62.0" text="Male" />
-            <CheckBox fx:id="female" layoutX="161.0" layoutY="68.0" mnemonicParsing="false" text="Female" GridPane.rowIndex="1" />
+            <CheckBox fx:id="m" layoutX="161.0" layoutY="41.0" mnemonicParsing="false" prefHeight="13.0" prefWidth="62.0" text="Male" />
+            <CheckBox fx:id="f" layoutX="161.0" layoutY="68.0" mnemonicParsing="false" text="Female" GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <Label layoutX="390.0" layoutY="14.0" text="Parentage" />
@@ -129,22 +129,22 @@
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <CheckBox fx:id="center" layoutX="482.0" layoutY="41.0" mnemonicParsing="false" text="Center in Cage" />
-            <CheckBox fx:id="leave" layoutX="568.0" layoutY="97.0" mnemonicParsing="false" text="Social Leave" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <CheckBox fx:id="contactless3" layoutX="482.0" layoutY="97.0" mnemonicParsing="false" text="Social Contact &lt; 0.030" GridPane.rowIndex="3" />
-            <CheckBox fx:id="contactless4" layoutX="568.0" layoutY="41.0" mnemonicParsing="false" text="Social Contact &lt; 0.400" GridPane.columnIndex="1" />
-            <CheckBox fx:id="contactless6" layoutX="568.0" layoutY="59.0" mnemonicParsing="false" text="Social Contact &lt; 0.600" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <CheckBox fx:id="socialcontact" layoutX="480.0" layoutY="77.0" mnemonicParsing="false" text="Social Contact" GridPane.rowIndex="2" />
-            <CheckBox fx:id="approach" layoutX="568.0" layoutY="77.0" mnemonicParsing="false" text="Social Approach" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <CheckBox fx:id="stayhide" layoutX="482.0" layoutY="59.0" mnemonicParsing="false" text="Stay/Hide in Cage" GridPane.rowIndex="1" />
-            <CheckBox fx:id="sniff" layoutX="567.0" layoutY="136.0" mnemonicParsing="false" text="Social Sniff" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <CheckBox fx:id="contactless7" layoutX="482.0" layoutY="136.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="177.0" text="Social Contact &lt; 0.070" GridPane.rowIndex="5" />
-            <CheckBox fx:id="contactless5" layoutX="482.0" layoutY="115.0" mnemonicParsing="false" text="Social Contact &lt; 0.050" GridPane.rowIndex="4" />
-            <CheckBox fx:id="mount" layoutX="568.0" layoutY="158.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="118.0" text="Social Mount" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <CheckBox fx:id="compete" layoutX="568.0" layoutY="176.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="143.0" text="Social Compete" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <CheckBox fx:id="contactless1" mnemonicParsing="false" text="Social Contact &lt; 0.100" GridPane.rowIndex="6" />
-            <CheckBox fx:id="contactless2" mnemonicParsing="false" text="Social Contact &lt; 0.200" GridPane.rowIndex="7" />
-            <CheckBox fx:id="follow" mnemonicParsing="false" text="Social Follow" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <CheckBox fx:id="center_duration" layoutX="482.0" layoutY="41.0" mnemonicParsing="false" text="Center in Cage" />
+            <CheckBox fx:id="leave_duration" layoutX="568.0" layoutY="97.0" mnemonicParsing="false" text="Social Leave" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <CheckBox fx:id="three_contact_duration" layoutX="482.0" layoutY="97.0" mnemonicParsing="false" text="Social Contact &lt; 0.030" GridPane.rowIndex="3" />
+            <CheckBox fx:id="four_contact_duration" layoutX="568.0" layoutY="41.0" mnemonicParsing="false" text="Social Contact &lt; 0.400" GridPane.columnIndex="1" />
+            <CheckBox fx:id="six_contact_duration" layoutX="568.0" layoutY="59.0" mnemonicParsing="false" text="Social Contact &lt; 0.600" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <CheckBox fx:id="social_contact_duration" layoutX="480.0" layoutY="77.0" mnemonicParsing="false" text="Social Contact" GridPane.rowIndex="2" />
+            <CheckBox fx:id="approach_duration" layoutX="568.0" layoutY="77.0" mnemonicParsing="false" text="Social Approach" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <CheckBox fx:id="stay_hide_duration" layoutX="482.0" layoutY="59.0" mnemonicParsing="false" text="Stay/Hide in Cage" GridPane.rowIndex="1" />
+            <CheckBox fx:id="sniff_duration" layoutX="567.0" layoutY="136.0" mnemonicParsing="false" text="Social Sniff" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <CheckBox fx:id="seven_contact_duration" layoutX="482.0" layoutY="136.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="177.0" text="Social Contact &lt; 0.070" GridPane.rowIndex="5" />
+            <CheckBox fx:id="five_contact_duration" layoutX="482.0" layoutY="115.0" mnemonicParsing="false" text="Social Contact &lt; 0.050" GridPane.rowIndex="4" />
+            <CheckBox fx:id="mount_duration" layoutX="568.0" layoutY="158.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="118.0" text="Social Mount" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <CheckBox fx:id="compete_duration" layoutX="568.0" layoutY="176.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="143.0" text="Social Compete" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <CheckBox fx:id="one_contact_duration" mnemonicParsing="false" text="Social Contact &lt; 0.100" GridPane.rowIndex="6" />
+            <CheckBox fx:id="two_contact_duration" mnemonicParsing="false" text="Social Contact &lt; 0.200" GridPane.rowIndex="7" />
+            <CheckBox fx:id="follow_duration" mnemonicParsing="false" text="Social Follow" GridPane.columnIndex="1" GridPane.rowIndex="4" />
          </children>
       </GridPane>
       <TextField fx:id="binsize" layoutX="45.0" layoutY="373.0" prefHeight="27.0" prefWidth="177.0" />
