@@ -1,11 +1,9 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
-
-import javax.xml.stream.events.Characters;
-
-import com.sun.xml.internal.fastinfoset.util.CharArray;
-
+import com.opencsv.CSVWriter;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 
@@ -17,34 +15,43 @@ public class DBConnection {
 	private final String PASS = "Mi1ch2ae7l92";
 	
     private String sql;
-	private String behavior;
+	private String behaviorId;
+	private String behaviorText;
 	
 	ArrayList<String> actorStrings = new ArrayList<String>();
 	ArrayList<String> sexStrings = new ArrayList<String>();
 	ArrayList<String> parentageStrings = new ArrayList<String>();
 	
+	
 	String actor_id;
 	String sex;
 	String parentage;
+	String dataKey;
+	String currentKey;
 	BigDecimal binvalue;
-	BigDecimal center_duration;
-	BigDecimal stay_hide_duration;
-	BigDecimal social_contact_duration;
-	BigDecimal three_contact_duration;
-	BigDecimal five_contact_duration;
-	BigDecimal seven_contact_duration;
-	BigDecimal one_contact_duration;
-	BigDecimal two_contact_duration;
-	BigDecimal four_contact_duration;
-	BigDecimal six_contact_duration;
-	BigDecimal approach_duration;
-	BigDecimal leave_duration;
-	BigDecimal follow_duration;
-	BigDecimal sniff_duration;
-	BigDecimal mount_duration;
-	BigDecimal compete_duration;
+	int binSize;
+	
+	ArrayList<BigDecimal> voleData = new ArrayList<BigDecimal>();
+	
+//	BigDecimal center_duration;
+//	BigDecimal stay_hide_duration;
+//	BigDecimal social_contact_duration;
+//	BigDecimal three_contact_duration;
+//	BigDecimal five_contact_duration;
+//	BigDecimal seven_contact_duration;
+//	BigDecimal one_contact_duration;
+//	BigDecimal two_contact_duration;
+//	BigDecimal four_contact_duration;
+//	BigDecimal six_contact_duration;
+//	BigDecimal approach_duration;
+//	BigDecimal leave_duration;
+//	BigDecimal follow_duration;
+//	BigDecimal sniff_duration;
+//	BigDecimal mount_duration;
+//	BigDecimal compete_duration;
 
-	public void connect(ArrayList<CheckBox> actorList, ArrayList<CheckBox> sexList, ArrayList<CheckBox> parentageList, ArrayList<CheckBox> behaviorList, TextField binsize){		
+	public void connect(ArrayList<CheckBox> actorList, ArrayList<CheckBox> sexList, ArrayList<CheckBox> parentageList, ArrayList<CheckBox> behaviorList, TextField binsize) throws IOException{
+		binSize = Integer.parseInt(binsize.getText());
 		Connection conn = null;
 		Statement stmt = null;
 		try{
@@ -58,12 +65,7 @@ public class DBConnection {
 		    //STEP 4: Execute a query
 		    System.out.println("Creating statement...");
 		    stmt = conn.createStatement();
-		    
-	    	for (CheckBox element: behaviorList) {
-	    		if(element.isSelected()){
-	    			behavior=element.getId();
-	    		}
-	    	}
+
 			for (CheckBox element: actorList) {
 	    		if(element.isSelected()){
 	    			actorStrings.add("'"+ element.getText() + "'");
@@ -80,43 +82,36 @@ public class DBConnection {
 	    		}
 	    	}
 		    
-//	    	behavior = "center_duration";
-	    	
-		    sql = "SELECT Actor.actor_id, sex, parentage, " + behavior + " FROM Bin INNER JOIN Actor "
-		    		+ "ON Actor.actor_id in ("+ listToString(actorStrings) +") ORDER BY Actor.actor_id";
-		    
-//		    sql = "SELECT Actor.actor_id, sex, parentage, " + behavior + " FROM Bin INNER JOIN Actor "
-//		    		+ "ON sex in ("+ listToString(sexStrings) +") ORDER BY Actor.actor_id";
-		    
-//		    sql = "SELECT Actor.actor_id, sex, parentage, " + behavior + " FROM Bin INNER JOIN Actor "
-//		    		+ "ON parentage in ("+ listToString(parentageStrings) +") ORDER BY Actor.actor_id";
-		    
-//		    sql = "SELECT Actor.actor_id, sex, parentage, " + behavior + " FROM Bin INNER JOIN Actor "
-//		    		+ "ON (sex in (" + listToString(sexStrings) + ") and parentage in (" + listToString(parentageStrings)
-//		    		+ ")) order by Actor.actor_id";
-		    ResultSet rs = stmt.executeQuery(sql);
-		    
-//		    (sex in ("m") and parentage in ("EXP10-C3"))
-		    
-		    int i = 1;
-		    
-		    //STEP 5: Extract data from result set
-		    while(rs.next()){
-		       //Retrieve by column name
-		    	actor_id = rs.getString("actor_id");
-		    	sex = rs.getString("sex");
-		    	parentage = rs.getString("parentage");
-		    	binvalue = rs.getBigDecimal(behavior);
-
-		    	//Display values
-		    	if (behavior=="center_duration"){
-			    	System.out.println("Actor ID: " + actor_id + ":" + behavior +":" + binvalue + " | # " +i);
-			    	i++;
-		    	}
-		    }
+	    	for (CheckBox element: behaviorList) {
+	    		if(element.isSelected()){
+	    			behaviorId=element.getId();
+	    			behaviorText=element.getText();
+	    	    	
+	    	    	if (!actorStrings.isEmpty()){
+	    	    		sql = "SELECT Actor.actor_id, sex, parentage, " + behaviorId + " FROM Bin INNER JOIN Actor "
+	    			    		+ "ON Actor.actor_id in ("+ listToString(actorStrings) +") ORDER BY Actor.actor_id";
+	    	    	}
+	    	    	
+	    	    	else if (!sexStrings.isEmpty()&&!parentageStrings.isEmpty()){
+	    			    sql = "SELECT Actor.actor_id, sex, parentage, " + behaviorId + " FROM Bin INNER JOIN Actor "
+	    			    		+ "ON (sex in (" + listToString(sexStrings) + ") and parentage in (" + listToString(parentageStrings)
+	    			    		+ ")) order by Actor.actor_id";
+	    	    	}
+	    	    	
+	    	    	else if (!sexStrings.isEmpty()){
+	    			    sql = "SELECT Actor.actor_id, sex, parentage, " + behaviorId + " FROM Bin INNER JOIN Actor "
+	    			    		+ "ON sex in ("+ listToString(sexStrings) +") ORDER BY Actor.actor_id";
+	    	    	}
+	    	    	
+	    	    	else if (!parentageStrings.isEmpty()){
+	    			    sql = "SELECT Actor.actor_id, sex, parentage, " + behaviorId + " FROM Bin INNER JOIN Actor "
+	    			    		+ "ON parentage in ("+ listToString(parentageStrings) +") ORDER BY Actor.actor_id";
+	    	    	}
+	    			query(stmt);
+	    		}
+	    	}
 		    
 		    //STEP 6: Clean-up environment
-		    rs.close();
 		    stmt.close();
 		    conn.close();
 		}
@@ -166,5 +161,45 @@ public class DBConnection {
 		}
 		String text = String.valueOf(charList);	
 	    return text;
+	}
+	
+	private void query (Statement stmt) throws SQLException, IOException {
+	    ResultSet rs = stmt.executeQuery(sql);
+		CSVWriter writer = new CSVWriter(new FileWriter("QueryData.csv"));
+
+    	System.out.println(actor_id);
+    	
+//    	int counter = 1;
+    	
+	    //STEP 5: Extract data from result set
+	    while(rs.next()){
+	    	//Retrieve by column name
+	    	actor_id = rs.getString("actor_id");
+	    	sex = rs.getString("sex");
+	    	parentage = rs.getString("parentage");
+	    	binvalue = rs.getBigDecimal(behaviorId);
+	    	
+			dataKey = actor_id + "," + sex + "," + parentage + "," + behaviorText + ",";
+//		    System.out.println(dataKey + "::" + binvalue + " | # " +counter);
+			
+			//Enter values into CSV
+			if (currentKey==dataKey){
+				System.out.println(currentKey==dataKey);
+				voleData.add(binvalue);
+			}
+			else if (currentKey!=dataKey){
+				String[] entries = {dataKey + voleData.toString()};		    
+			    writer.writeNext(entries);
+			    voleData.clear();
+			    currentKey=dataKey;
+			    voleData.add(binvalue);
+//				System.out.println("It happens " + counter + " times");
+//				counter++;
+			}
+							
+			
+	    }
+		writer.close();
+	    rs.close();
 	}
 }

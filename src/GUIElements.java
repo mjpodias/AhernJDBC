@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -42,7 +43,7 @@ public class GUIElements {
     }
 
     @FXML
-    private void exportOnAction(ActionEvent event) {
+    private void exportOnAction(ActionEvent event) throws IOException {
 		db.connect(actor, gender, parentage, behavior, binsize);
     }
     
