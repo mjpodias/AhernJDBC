@@ -22,14 +22,14 @@ public class DBConnection {
 	ArrayList<String> sexStrings = new ArrayList<String>();
 	ArrayList<String> parentageStrings = new ArrayList<String>();
 	
-	
 	String actor_id;
 	String sex;
 	String parentage;
 	String dataKey;
-	String currentKey;
+	String currentKey = "init";
 	BigDecimal binvalue;
 	int binSize;
+	
 	
 	ArrayList<BigDecimal> voleData = new ArrayList<BigDecimal>();
 	
@@ -51,7 +51,9 @@ public class DBConnection {
 //	BigDecimal compete_duration;
 
 	public void connect(ArrayList<CheckBox> actorList, ArrayList<CheckBox> sexList, ArrayList<CheckBox> parentageList, ArrayList<CheckBox> behaviorList, TextField binsize) throws IOException{
-		binSize = Integer.parseInt(binsize.getText());
+//		binSize = Integer.parseInt(binsize.getText());
+		CSVWriter writer = new CSVWriter(new FileWriter("QueryData.csv"), CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_QUOTE_CHARACTER);
+		writer.flush();		
 		Connection conn = null;
 		Statement stmt = null;
 		try{
@@ -107,41 +109,34 @@ public class DBConnection {
 	    			    sql = "SELECT Actor.actor_id, sex, parentage, " + behaviorId + " FROM Bin INNER JOIN Actor "
 	    			    		+ "ON parentage in ("+ listToString(parentageStrings) +") ORDER BY Actor.actor_id";
 	    	    	}
-	    			query(stmt);
+	    			query(stmt, writer);
 	    		}
 	    	}
-		    
 		    //STEP 6: Clean-up environment
 		    stmt.close();
 		    conn.close();
 		}
-			
 		catch(SQLException se){
 			//Handle errors for JDBC
 		    se.printStackTrace();
 		}
-		
 		catch(Exception e){
 			//Handle errors for Class.forName
 		    e.printStackTrace();
 		}
-		
 		finally{
 			//finally block used to close resources
 		    try{
 		    	if(stmt!=null)
 		    		stmt.close();
 		    }
-		    
 		    catch(SQLException se2){
 		    
 		    }// nothing we can do
-		    
 		    try{
 		    	if(conn!=null)
 		        conn.close();
 		    }
-		    
 		    catch(SQLException se){
 		         se.printStackTrace();
 		    }//end finally try
@@ -163,15 +158,10 @@ public class DBConnection {
 	    return text;
 	}
 	
-	private void query (Statement stmt) throws SQLException, IOException {
+	private void query(Statement stmt, CSVWriter writer) throws SQLException, IOException {
 	    ResultSet rs = stmt.executeQuery(sql);
-		CSVWriter writer = new CSVWriter(new FileWriter("QueryData.csv"));
 
-    	System.out.println(actor_id);
-    	
-//    	int counter = 1;
-    	
-	    //STEP 5: Extract data from result set
+		//STEP 5: Extract data from result set
 	    while(rs.next()){
 	    	//Retrieve by column name
 	    	actor_id = rs.getString("actor_id");
@@ -180,25 +170,29 @@ public class DBConnection {
 	    	binvalue = rs.getBigDecimal(behaviorId);
 	    	
 			dataKey = actor_id + "," + sex + "," + parentage + "," + behaviorText + ",";
-//		    System.out.println(dataKey + "::" + binvalue + " | # " +counter);
-			
 			//Enter values into CSV
-			if (currentKey==dataKey){
-				System.out.println(currentKey==dataKey);
-				voleData.add(binvalue);
+			if (currentKey.equals("init")){
+				currentKey=dataKey;
 			}
-			else if (currentKey!=dataKey){
-				String[] entries = {dataKey + voleData.toString()};		    
+			else if (!currentKey.equals(dataKey)||!rs.next()){
+//				voleData.trimToSize();
+				String[] entries = {currentKey + voleData.toString().replace('[',' ').replace(']',' ')};
 			    writer.writeNext(entries);
+			    System.out.println(voleData.size());
 			    voleData.clear();
 			    currentKey=dataKey;
-			    voleData.add(binvalue);
-//				System.out.println("It happens " + counter + " times");
-//				counter++;
 			}
-							
-			
+			else if (!rs.next()){
+//				voleData.trimToSize();
+				String[] entries = {currentKey + voleData.toString().replace('[',' ').replace(']',' ')};
+			    writer.writeNext(entries);
+			    System.out.println(voleData.size());
+			    voleData.clear();
+			    break;
+			}
+			voleData.add(binvalue);
 	    }
+	    currentKey="init";
 		writer.close();
 	    rs.close();
 	}
