@@ -1,7 +1,12 @@
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.*;
+import java.math.RoundingMode;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import com.opencsv.CSVWriter;
 import javafx.scene.control.CheckBox;
@@ -9,51 +14,35 @@ import javafx.scene.control.TextField;
 
 public class DBConnection {	
 	// JDBC driver name and database URL and database credentials
-	private final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-	private final String DB_URL = "jdbc:mysql://localhost:3306/Vole_DB";
-	private final String USER = "root";
-	private final String PASS = "Mi1ch2ae7l92";
+	private final String JDBC_DRIVER = "org.h2.Driver";  
+	private final String DB_URL = "jdbc:h2:./lib/h2/database";
+	private final String USER = "sa";
+	private final String PASS = "";
 	
     private String sql;
-	private String behaviorId;
-	private String behaviorText;
 	
 	ArrayList<String> actorStrings = new ArrayList<String>();
 	ArrayList<String> sexStrings = new ArrayList<String>();
 	ArrayList<String> parentageStrings = new ArrayList<String>();
+	ArrayList<String> behaviorIDs = new ArrayList<String>();
 	
 	String actor_id;
 	String sex;
 	String parentage;
 	String dataKey;
 	String currentKey = "init";
-	BigDecimal binvalue;
-	int binSize;
+	Double binvalue;
+	int binSize = 1;
 	
-	
-	ArrayList<BigDecimal> voleData = new ArrayList<BigDecimal>();
-	
-//	BigDecimal center_duration;
-//	BigDecimal stay_hide_duration;
-//	BigDecimal social_contact_duration;
-//	BigDecimal three_contact_duration;
-//	BigDecimal five_contact_duration;
-//	BigDecimal seven_contact_duration;
-//	BigDecimal one_contact_duration;
-//	BigDecimal two_contact_duration;
-//	BigDecimal four_contact_duration;
-//	BigDecimal six_contact_duration;
-//	BigDecimal approach_duration;
-//	BigDecimal leave_duration;
-//	BigDecimal follow_duration;
-//	BigDecimal sniff_duration;
-//	BigDecimal mount_duration;
-//	BigDecimal compete_duration;
+	ArrayList<Double> voleData = new ArrayList<Double>();
+	ArrayList<Double> alteredVoleData = new ArrayList<Double>();
 
 	public void connect(ArrayList<CheckBox> actorList, ArrayList<CheckBox> sexList, ArrayList<CheckBox> parentageList, ArrayList<CheckBox> behaviorList, TextField binsize) throws IOException{
-//		binSize = Integer.parseInt(binsize.getText());
+		if (!binsize.getText().isEmpty()){
+			binSize = Integer.parseInt(binsize.getText());
+		}
 		CSVWriter writer = new CSVWriter(new FileWriter("QueryData.csv"), CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_QUOTE_CHARACTER);
-		writer.flush();		
+		writer.flush();
 		Connection conn = null;
 		Statement stmt = null;
 		try{
@@ -61,11 +50,9 @@ public class DBConnection {
 		    Class.forName(JDBC_DRIVER);
 		    
 		    //STEP 3: Open a connection
-		    System.out.println("Connecting to database...");
 		    conn = DriverManager.getConnection(DB_URL,USER,PASS);
 	
 		    //STEP 4: Execute a query
-		    System.out.println("Creating statement...");
 		    stmt = conn.createStatement();
 
 			for (CheckBox element: actorList) {
@@ -74,45 +61,42 @@ public class DBConnection {
 	    		}
 	    	}
 	    	for (CheckBox element: sexList) {
-	    		if(element.isSelected()){	
+	    		if(element.isSelected()){
 	    			sexStrings.add("'"+ element.getId() + "'");
 	    		}
 	    	}
 	    	for (CheckBox element: parentageList) {
-	    		if(element.isSelected()){	    			
+	    		if(element.isSelected()){
 	    			parentageStrings.add("'"+ element.getText() + "'");
 	    		}
 	    	}
 		    
 	    	for (CheckBox element: behaviorList) {
 	    		if(element.isSelected()){
-	    			behaviorId=element.getId();
-	    			behaviorText=element.getText();
-	    	    	
-	    	    	if (!actorStrings.isEmpty()){
-	    	    		sql = "SELECT Actor.actor_id, sex, parentage, " + behaviorId + " FROM Bin INNER JOIN Actor "
-	    			    		+ "ON Actor.actor_id in ("+ listToString(actorStrings) +") ORDER BY Actor.actor_id";
-	    	    	}
-	    	    	
-	    	    	else if (!sexStrings.isEmpty()&&!parentageStrings.isEmpty()){
-	    			    sql = "SELECT Actor.actor_id, sex, parentage, " + behaviorId + " FROM Bin INNER JOIN Actor "
-	    			    		+ "ON (sex in (" + listToString(sexStrings) + ") and parentage in (" + listToString(parentageStrings)
-	    			    		+ ")) order by Actor.actor_id";
-	    	    	}
-	    	    	
-	    	    	else if (!sexStrings.isEmpty()){
-	    			    sql = "SELECT Actor.actor_id, sex, parentage, " + behaviorId + " FROM Bin INNER JOIN Actor "
-	    			    		+ "ON sex in ("+ listToString(sexStrings) +") ORDER BY Actor.actor_id";
-	    	    	}
-	    	    	
-	    	    	else if (!parentageStrings.isEmpty()){
-	    			    sql = "SELECT Actor.actor_id, sex, parentage, " + behaviorId + " FROM Bin INNER JOIN Actor "
-	    			    		+ "ON parentage in ("+ listToString(parentageStrings) +") ORDER BY Actor.actor_id";
-	    	    	}
-	    			query(stmt, writer);
-	    		}
-	    	}
+		    		if (!actorStrings.isEmpty()){
+			    		sql = "SELECT actor_id, sex, parentage, " + element.getId() + " FROM VOLEDB.Bin INNER JOIN VOLEDB.Actor "
+					    		+ "ON actor_id=qid WHERE actor_id IN ("+ listToString(actorStrings) +") ORDER BY actor_id";
+			    	}
+			    	else if (!sexStrings.isEmpty()&&!parentageStrings.isEmpty()){
+					    sql = "SELECT actor_id, sex, parentage, " + element.getId() + " FROM VOLEDB.Bin INNER JOIN VOLEDB.Actor "
+					    		+ "ON actor_id=qid WHERE (sex IN (" + listToString(sexStrings) + ")) AND (parentage IN (" + listToString(parentageStrings)
+					    		+ ")) order by actor_id";
+			    	}
+			    	
+			    	else if (!sexStrings.isEmpty()){
+					    sql = "SELECT actor_id, sex, parentage, " + element.getId() + " FROM VOLEDB.Bin INNER JOIN VOLEDB.Actor "
+					    		+ "ON actor_id=qid WHERE sex IN ("+ listToString(sexStrings) +") ORDER BY actor_id";
+			    	}
+			    	
+			    	else if (!parentageStrings.isEmpty()){
+					    sql = "SELECT actor_id, sex, parentage, " + element.getId() + " FROM VOLEDB.Bin INNER JOIN VOLEDB.Actor "
+					    		+ "ON actor_id=qid WHERE parentage IN ("+ listToString(parentageStrings) +") ORDER BY actor_id";
+			    	}
+		    		binQuery(stmt, writer, element.getId(), element.getText());
+	    		}		    	
+	    	}	    	
 		    //STEP 6: Clean-up environment
+			writer.close();
 		    stmt.close();
 		    conn.close();
 		}
@@ -141,7 +125,6 @@ public class DBConnection {
 		         se.printStackTrace();
 		    }//end finally try
 		}
-		System.out.println("Goodbye!");
 		actorStrings.clear();
 		sexStrings.clear();
 		parentageStrings.clear();
@@ -158,42 +141,69 @@ public class DBConnection {
 	    return text;
 	}
 	
-	private void query(Statement stmt, CSVWriter writer) throws SQLException, IOException {
+	private void binQuery(Statement stmt, CSVWriter writer, String behaviorID, String behaviorText) throws SQLException, IOException {
 	    ResultSet rs = stmt.executeQuery(sql);
-
-		//STEP 5: Extract data from result set
+	    if (!rs.next() ) {
+	        System.out.println("There is no data here.");
+	    }
+	    //STEP 5: Extract data from result set
 	    while(rs.next()){
 	    	//Retrieve by column name
 	    	actor_id = rs.getString("actor_id");
 	    	sex = rs.getString("sex");
 	    	parentage = rs.getString("parentage");
-	    	binvalue = rs.getBigDecimal(behaviorId);
-	    	
+	    	binvalue = rs.getDouble(behaviorID);
 			dataKey = actor_id + "," + sex + "," + parentage + "," + behaviorText + ",";
 			//Enter values into CSV
 			if (currentKey.equals("init")){
 				currentKey=dataKey;
 			}
-			else if (!currentKey.equals(dataKey)||!rs.next()){
-//				voleData.trimToSize();
-				String[] entries = {currentKey + voleData.toString().replace('[',' ').replace(']',' ')};
+			else if (!currentKey.equals(dataKey)){
+				voleData.trimToSize();
+				binSizeFunction();
+				truncateDecimal(alteredVoleData);
+				String[] entries = {currentKey + alteredVoleData.toString().replace('[',' ').replace(']',' ')};
 			    writer.writeNext(entries);
-			    System.out.println(voleData.size());
 			    voleData.clear();
+			    alteredVoleData.clear();
 			    currentKey=dataKey;
 			}
-			else if (!rs.next()){
-//				voleData.trimToSize();
-				String[] entries = {currentKey + voleData.toString().replace('[',' ').replace(']',' ')};
-			    writer.writeNext(entries);
-			    System.out.println(voleData.size());
-			    voleData.clear();
-			    break;
-			}
 			voleData.add(binvalue);
+			if (rs.isLast()){
+				voleData.trimToSize();
+				binSizeFunction();
+				truncateDecimal(alteredVoleData);
+				String[] entries = {currentKey + alteredVoleData.toString().replace('[',' ').replace(']',' ')};
+			    writer.writeNext(entries);
+			    voleData.clear();
+			    alteredVoleData.clear();
+			}
 	    }
 	    currentKey="init";
-		writer.close();
+	    voleData.clear();
 	    rs.close();
+	}
+	
+	private void binSizeFunction() {
+		int newArraySize = voleData.size()/binSize;
+		if (voleData.size()%binSize!=0){
+			newArraySize++;
+		}
+		for (int i=0; i<newArraySize; i++){
+			int position = i*binSize;
+			alteredVoleData.add(0.0);
+			for (int j=0; (j<binSize)&&(position+j<voleData.size()); j++){
+				alteredVoleData.set(i, alteredVoleData.get(i)+voleData.get(position+j));
+			}
+		}
+	}
+	
+	private void truncateDecimal(ArrayList<Double> list){
+		for (int i=0; i<list.size(); i++){
+			DecimalFormat df = new DecimalFormat("#.##");
+			df.setRoundingMode(RoundingMode.CEILING);
+			double datum = Double.parseDouble(df.format(list.get(i)));
+			list.set(i, datum);
+		}
 	}
 }

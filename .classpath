@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/Users/mjpodias/Documents/Programming/Workspace/AhernJDBC/lib/controlsfx-8.40.10/controlsfx-8.40.10.jar"/>
 	<classpathentry kind="lib" path="/Users/mjpodias/Documents/Programming/Workspace/AhernJDBC/lib/mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar"/>
+	<classpathentry kind="lib" path="/Users/mjpodias/Documents/Programming/Workspace/AhernJDBC/lib/h2/h2-1.4.191.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
